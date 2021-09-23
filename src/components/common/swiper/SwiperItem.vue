@@ -1,0 +1,30 @@
+<template>
+  <div class="slide">
+    <slot></slot>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "SwiperItem"
+}
+</script>
+
+<style scoped>
+  .slide{
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  .slide a{
+    display: block;
+    line-height: 0;
+  }
+
+  .slide a img{
+    width: 100%;
+  }
+
+
+
+</style>
