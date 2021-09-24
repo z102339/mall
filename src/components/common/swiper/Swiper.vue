@@ -1,8 +1,17 @@
 <template>
+
   <div id="hy-swiper">
-    <div class="swiper">
+
+    <div class="swiper" @touchstart="touchStart" @touchmove="touchMove" @touchend="touchEnd">
       <slot></slot>
     </div>
+    <div class="indicator">
+      <slot name="indicator" v-if="showIndicator&&slideCount >1">
+        <div v-for="(item,index) in slideCount" class="indi-item" :class="{active:index==currentIndex-1}"
+             :key="index"></div>
+      </slot>
+    </div>
+
   </div>
 </template>
 
@@ -16,7 +25,11 @@ export default {
     },
     animationDuration: {
       type: Number,
-      default: 200
+      default: 500
+    },
+    showIndicator: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -24,18 +37,68 @@ export default {
       slideCount: 0,
       swiperStyle: {},
       totalWidth: 0,
-      currentIndex: 1
+      currentIndex: 1,
+      isScrolling: false,
+      isStart: false
     }
   },
   mounted() {
     setTimeout(_ => {
       this.handleDom()
+      this.isStart = true
       this.startPlay()
-    }, 3000)
+    }, 1000)
   },
   methods: {
+    touchStart(event) {
+      if (this.isScrolling || !this.isStart) {
+        return
+      }
+      ;
+      this.stopPlay()
+      this.downX = event.touches[0].pageX;
+    },
+    touchMove(event) {
+      if (this.isScrolling || !this.isStart) {
+        return
+      }
+      this.offsetX = event.touches[0].pageX - this.downX;
+      this.swiperStyle.transition = ""
+      this.setTransform(-this.currentIndex * this.totalWidth + this.offsetX)
+    },
+    touchEnd() {
+      if (this.isScrolling || !this.isStart) {
+        return
+      }
+      if (Math.abs(this.offsetX) > this.totalWidth * 0.3) {
+        if (this.offsetX > 0) {
+          this.currentIndex--;
+          this.scrollContent(this.currentIndex)
+        } else {
+          this.currentIndex++
+          this.scrollContent(this.currentIndex)
+        }
+      } else {
+        this.scrollContent(this.currentIndex);
+      }
+      this.startPlay()
+    },
     handleDom() {
       const swiperEl = document.querySelector('.swiper')
+      this.transitionCallback = () => {
+        this.isScrolling = false
+        if (this.currentIndex == this.slideCount + 1) {
+            this.currentIndex = 1
+            this.swiperStyle.transition = ""
+            this.setTransform(-this.totalWidth)
+        } else if (this.currentIndex == 0) {
+            this.currentIndex = this.slideCount
+            this.swiperStyle.transition = ""
+            this.setTransform(-this.currentIndex * this.totalWidth)
+        }
+      }
+      swiperEl.removeEventListener("transitionend", this.transitionCallback, false)
+      swiperEl.addEventListener("transitionend", this.transitionCallback, false)
       const slideEls = swiperEl.getElementsByClassName('slide')
       this.slideCount = slideEls.length
       if (this.slideCount > 1) {
@@ -47,27 +110,14 @@ export default {
         this.swiperStyle = swiperEl.style
         this.setTransform(-this.totalWidth)
       }
+
     },
 
     startPlay() {
-      console.log("startPlay")
+      this.intervalClearId && clearInterval(this.intervalClearId)
       this.intervalClearId = setInterval(_ => {
-
-
         this.currentIndex++
-
         this.scrollContent(this.currentIndex)
-        if(this.currentIndex==this.slideCount+1){
-          console.log("倒数第一张动画完毕")
-          setTimeout(()=>{
-            this.currentIndex=1
-            this.swiperStyle.transition="0ms"
-            this.setTransform(-this.totalWidth)
-          },this.animationDuration)
-
-        }
-
-
       }, this.interval)
     },
     setTransform(transitionX) {
@@ -75,19 +125,26 @@ export default {
       this.swiperStyle['-webkit-transform'] = `translate3d(${transitionX}px), 0, 0`;
       this.swiperStyle['-ms-transform'] = `translate3d(${transitionX}px), 0, 0`;
     },
-
-    fixPosition() {
-      if (this.currentIndex == this.slideCount + 1) {
-        console.log("优化到第一张了")
-        this.currentIndex = 0
-      }
-    },
-
     scrollContent(targetIndex) {
+      this.isScrolling = true
       this.swiperStyle.transition = `transform ${this.animationDuration}ms`
       this.setTransform(-targetIndex * this.totalWidth)
+      // if (targetIndex == this.slideCount + 1) {
+      //   setTimeout(() => {
+      //     this.currentIndex = 1
+      //     this.swiperStyle.transition = "0ms"
+      //     this.isScrolling = false
+      //     this.setTransform(-this.totalWidth)
+      //   }, this.animationDuration)
+      // } else if (targetIndex == 0) {
+      //   setTimeout(_ => {
+      //     this.currentIndex = this.slideCount
+      //     this.swiperStyle.transition = "0ms"
+      //     this.isScrolling = false
+      //     this.setTransform(-this.currentIndex * this.totalWidth)
+      //   }, this.animationDuration)
+      // }
     },
-
 
     stopPlay() {
       clearInterval(this.intervalClearId)
@@ -100,12 +157,41 @@ export default {
 <style scoped>
 
 #hy-swiper {
+  /*margin: 10px 14px;*/
   position: relative;
   overflow: hidden;
+  /*border-radius: 10px;*/
+
 }
+
 
 .swiper {
   display: flex;
+}
+
+.indicator {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+}
+
+.indi-item {
+  box-sizing: border-box;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: #fff;
+  line-height: 8px;
+  text-align: center;
+  font-size: 12px;
+  margin: 0 5px;
+}
+
+.active {
+  background-color: #f00;
 }
 
 </style>

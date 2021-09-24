@@ -3,27 +3,27 @@
     <nav-bar class="home-nav">
      <div slot="center">首页</div>
     </nav-bar>
-    <swiper>
-      <swiper-item v-for="bannerItem in banners">
-        <a :href="bannerItem.link">
-          <img :src="bannerItem.image" alt="">
-        </a>
-      </swiper-item>
-    </swiper>
+    <home-swiper :banners="banners"></home-swiper>
+    <recommend-view :recommends="recommends"></recommend-view>
+
+
   </div>
 </template>
 
 <script>
 import NavBar from "components/common/navbar/NavBar";
 import {getHomeMultiData} from "network/home";
-import SwiperItem from "components/common/swiper/SwiperItem";
-import Swiper from "components/common/swiper/Swiper";
+import HomeSwiper from "./childComponents/HomeSwiper";
+import RecommendView from "views/home/childComponents/RecommendView";
+
+
 export default {
   name: "Home",
   components:{
     NavBar,
-    Swiper,
-    SwiperItem
+    HomeSwiper,
+    RecommendView,
+
   },
   data() {
     return {
@@ -33,6 +33,7 @@ export default {
   },
   created() {
     getHomeMultiData().then(({data})=>{
+      console.log(data)
       this.banners=data.banner.list
       this.recommends=data.recommend.list
     }).catch(reason => {
