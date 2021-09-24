@@ -70,7 +70,7 @@ export default {
       if (this.isScrolling || !this.isStart) {
         return
       }
-      if (Math.abs(this.offsetX) > this.totalWidth * 0.3) {
+      if (Math.abs(this.offsetX) > this.totalWidth * 0.1) {
         if (this.offsetX > 0) {
           this.currentIndex--;
           this.scrollContent(this.currentIndex)
@@ -86,15 +86,14 @@ export default {
     handleDom() {
       const swiperEl = document.querySelector('.swiper')
       this.transitionCallback = () => {
+        this.swiperStyle.transition = ""
         this.isScrolling = false
-        if (this.currentIndex == this.slideCount + 1) {
-            this.currentIndex = 1
-            this.swiperStyle.transition = ""
-            this.setTransform(-this.totalWidth)
-        } else if (this.currentIndex == 0) {
-            this.currentIndex = this.slideCount
-            this.swiperStyle.transition = ""
-            this.setTransform(-this.currentIndex * this.totalWidth)
+        if (this.resetFirst) {
+          this.setTransform(-this.totalWidth)
+          this.resetFirst = false
+        } else if (this.resetLast) {
+          this.setTransform(-this.currentIndex * this.totalWidth)
+          this.resetLast = false
         }
       }
       swiperEl.removeEventListener("transitionend", this.transitionCallback, false)
@@ -129,21 +128,13 @@ export default {
       this.isScrolling = true
       this.swiperStyle.transition = `transform ${this.animationDuration}ms`
       this.setTransform(-targetIndex * this.totalWidth)
-      // if (targetIndex == this.slideCount + 1) {
-      //   setTimeout(() => {
-      //     this.currentIndex = 1
-      //     this.swiperStyle.transition = "0ms"
-      //     this.isScrolling = false
-      //     this.setTransform(-this.totalWidth)
-      //   }, this.animationDuration)
-      // } else if (targetIndex == 0) {
-      //   setTimeout(_ => {
-      //     this.currentIndex = this.slideCount
-      //     this.swiperStyle.transition = "0ms"
-      //     this.isScrolling = false
-      //     this.setTransform(-this.currentIndex * this.totalWidth)
-      //   }, this.animationDuration)
-      // }
+      if (targetIndex == this.slideCount + 1) {
+        this.currentIndex = 1
+        this.resetFirst = true
+      } else if (targetIndex == 0) {
+        this.currentIndex = this.slideCount
+        this.resetLast = true
+      }
     },
 
     stopPlay() {
