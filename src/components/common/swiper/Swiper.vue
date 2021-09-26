@@ -30,25 +30,31 @@ export default {
     showIndicator: {
       type: Boolean,
       default: true
-    }
+    },
   },
   data() {
     return {
-      slideCount: 0,
       swiperStyle: {},
       totalWidth: 0,
       currentIndex: 1,
       isScrolling: false,
-      isStart: false
+      isStart: false,
+      imgLoadedCount:0,
+      slideCount:0,
+
     }
   },
-  mounted() {
-    setTimeout(_ => {
+
+
+  updated() {
+    if (!this.isStart&&document.querySelectorAll(".slide").length>1) {
+      this.isStart=true
       this.handleDom()
-      this.isStart = true
       this.startPlay()
-    }, 1000)
+    }
   },
+
+
   methods: {
     touchStart(event) {
       if (this.isScrolling || !this.isStart) {
@@ -99,7 +105,7 @@ export default {
       swiperEl.removeEventListener("transitionend", this.transitionCallback, false)
       swiperEl.addEventListener("transitionend", this.transitionCallback, false)
       const slideEls = swiperEl.getElementsByClassName('slide')
-      this.slideCount = slideEls.length
+      this.slideCount=slideEls.length
       if (this.slideCount > 1) {
         const cloneFirst = slideEls[0].cloneNode(true)
         const cloneLast = slideEls[this.slideCount - 1].cloneNode(true)
@@ -108,6 +114,29 @@ export default {
         this.totalWidth = swiperEl.offsetWidth
         this.swiperStyle = swiperEl.style
         this.setTransform(-this.totalWidth)
+
+        // Array.from(swiperEl.getElementsByTagName("img")).forEach((img) => {
+        //   console.log(img)
+        //   if(img.complete){
+        //     this.imgLoadedCount++
+        //     console.log("当前加载的数量"+this.imgLoadedCount)
+        //     if (this.imgLoadedCount == this.slideCount + 2) {
+        //       console.log("所有图片加载完毕")
+        //       this.isStart=true
+        //       this.startPlay()
+        //     }
+        //   }else{
+        //     img.onload=()=>{
+        //       this.imgLoadedCount++
+        //       console.log("当前加载的数量"+this.imgLoadedCount)
+        //       if (this.imgLoadedCount == this.slideCount + 2) {
+        //         console.log("所有图片加载完毕")
+        //         this.isStart=true
+        //         this.startPlay()
+        //       }
+        //     }
+        //   }
+        // })
       }
 
     },
