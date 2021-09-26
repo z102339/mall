@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <router-view class="app-top"></router-view>
     <main-tab-bar></main-tab-bar>
   </div>
 </template>
@@ -23,5 +23,15 @@ export default {
 [v-cloak]{
   display: none;
 }
+
+#app{
+  /*display: flex;*/
+  /*flex-direction: column;*/
+  /*height: 100vh;*/
+}
+
+/*.app-top{*/
+/*  height: calc(100% - 49px);*/
+/*}*/
 
 </style>

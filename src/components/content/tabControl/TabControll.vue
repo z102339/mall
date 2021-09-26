@@ -40,7 +40,7 @@ export default {
     line-height: 40px;
     height: 40px;
     position: sticky;
-    top: 44px;
+    top: 0px;
     background: #fff;
     text-align: center;
   }

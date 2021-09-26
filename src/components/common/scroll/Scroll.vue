@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper" ref="wrapper">
+  <div ref="wrapper">
     <div class="content">
       <slot></slot>
     </div>
@@ -15,8 +15,26 @@ export default {
       bScroll:null
     }
   },
+  props:{
+    probeType:{
+      type:Number,
+      default:0
+    }
+  },
+  methods:{
+    scrollTo(x, y, time = 300) {
+      this.bScroll.scrollTo(x,y,time)
+    }
+  },
   mounted() {
-    this.bScroll=new BScroll(this.$refs.wrapper,)
+    this.bScroll=new BScroll(this.$refs.wrapper,{
+      click:true,
+      probeType: this.probeType
+    })
+    this.bScroll.on('scroll',position=>{
+      // console.log(position)
+      this.$emit("scroll",position)
+    })
   }
 }
 </script>
