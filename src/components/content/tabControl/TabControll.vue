@@ -1,6 +1,6 @@
 <template>
   <div class="tab-control">
-    <div v-for="(title,index) in titles" class="tab-control-item" @click="onClick(index)" :class="{active:currentIndex==index}">
+    <div v-for="(title,index) in titles"  class="tab-control-item" @click="onClick(index)" :class="{active:currentIndex==index}">
       <span>{{title}}</span>
     </div>
   </div>
@@ -15,13 +15,12 @@ export default {
       default(){
         return []
       }
+    },
+    currentIndex:{
+      type:Number,
+      default:0
     }
 
-  },
-  data() {
-    return {
-      currentIndex:0
-    }
   },
   methods:{
     onClick(index){
@@ -39,7 +38,6 @@ export default {
     font-size: 14px;
     line-height: 40px;
     height: 40px;
-    position: sticky;
     top: 0px;
     background: #fff;
     text-align: center;
