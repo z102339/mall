@@ -56,7 +56,8 @@ export default {
       tabIndex: 0,
       backTopShow:false,
       tabControlHeight:0,
-      showTopTabControl:false
+      showTopTabControl:false,
+      scrollY:0
     }
   },
 
@@ -72,10 +73,17 @@ export default {
       }
     }
   },
+  activated() {
+    this.$refs.scroll.scrollTo(0,this.scrollY,0)
+    this.$refs.scroll.refresh()
+  },
+  deactivated() {
+    this.scrollY=this.$refs.scroll.bScroll.y
+
+  },
   methods: {
     getHomeMultiData() {
       getHomeMultiData().then(({data}) => {
-        console.log(data)
         this.banners = data.banner.list
         this.recommends = data.recommend.list
       }).catch(reason => {
@@ -88,22 +96,18 @@ export default {
         this.goods[type].page++
         this.goods[type].list.push(...res.data.list)
         this.$refs.scroll.finishPullUp();
-        // console.log(JSON.stringify(this.goods[type].list,null,2))
       })
     },
     tabClick(index) {
-      console.log("currentIndex" + index)
       this.tabIndex = index
     },
     backTopClick(){
       this.$refs.scroll.scrollTo(0,0)
-      console.log("backTopClick")
     },
 
     scrollChange(position){
       this.backTopShow=Math.abs(position.y)>1000
       if (Math.abs(position.y) >= this.tabControlHeight) {
-        console.log(this.showTopTabControl)
         this.showTopTabControl=true
       }else{
         this.showTopTabControl=false
@@ -125,7 +129,6 @@ export default {
 
     swiperImageLoad() {
       this.tabControlHeight=this.$refs.tabControl.$el.offsetTop
-      // console.log(this.$refs.tabControl.$el.offsetTop);
     }
 
 

@@ -34,7 +34,6 @@ export default {
       this.bScroll && this.bScroll.finishPullUp()
     },
     refresh() {
-      console.log("refresh")
       this.bScroll && this.bScroll.refresh()
     }
   },
@@ -45,13 +44,11 @@ export default {
       pullUpLoad: this.pullUpLoad
     })
     this.bScroll.on('scroll', position => {
-      // console.log(position)
       this.$emit("scroll", position)
     })
 
     if (this.pullUpLoad) {
       this.bScroll.on('pullingUp', () => {
-        console.log("上拉加载更多")
         this.$emit("loadMore")
       });
     }

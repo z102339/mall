@@ -54,6 +54,10 @@ export default {
     }
   },
 
+  destroyed() {
+    this.stopPlay()
+  },
+
 
   methods: {
     touchStart(event) {

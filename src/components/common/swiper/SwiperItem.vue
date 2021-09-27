@@ -21,7 +21,7 @@ export default {
     line-height: 0;
   }
 
-  .slide a img{
+  .slide  img{
     width: 100%;
   }
 
