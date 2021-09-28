@@ -1,5 +1,5 @@
 <template>
-  <div v-if="Object.keys(detailInfo).length!=0">
+  <div v-if="Object.keys(detailInfo).length!=0" class="goods-info">
     <div class="info-desc clear-fix">
       <div class="start">
       </div>
@@ -31,6 +31,12 @@ export default {
 </script>
 
 <style scoped>
+
+  .goods-info{
+    padding-bottom: 20px;
+    border-bottom: 5px solid #f2f5f8;
+  }
+
   .info-desc{
     margin: 15px;
   }
@@ -85,6 +91,7 @@ export default {
 
   .info-key{
     margin-left: 15px;
+    margin-bottom: 10px;
   }
 
   img{

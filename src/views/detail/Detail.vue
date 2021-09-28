@@ -1,40 +1,33 @@
 <template>
   <div id="detail">
     <detail-nav-bar></detail-nav-bar>
-    <scroll class="scroll" ref="scroll">
+    <scroll class="scroll" ref="scroll" :probe-type="3" @scroll="scrollChange">
       <detail-swiper :banners="banners"></detail-swiper>
       <detail-base-info :goods="goods"></detail-base-info>
       <shop-info :shop-info="shopInfo"></shop-info>
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoaded"></detail-goods-info>
-      <ul>
-        <li>item1</li>
-        <li>item2</li>
-        <li>item3</li>
-        <li>item4</li>
-        <li>item5</li>
-        <li>item6</li>
-        <li>item7</li>
-        <li>item8</li>
-        <li>item9</li>
-        <li>item10</li>
-      </ul>
+      <detail-param-info :param-info="paramInfo"></detail-param-info>
     </scroll>
+    <back-top v-show="showBackTop" @click.native="backToTop"></back-top>
+
   </div>
 </template>
 
 <script>
 import Scroll from "components/common/scroll/Scroll";
+import BackTop from "components/content/backTop/BackTop";
 
 import DetailNavBar from "views/detail/childComponents/DetailNavBar";
 import DetailSwiper from "views/detail/childComponents/DetailSwiper";
 import DetailBaseInfo from "views/detail/childComponents/DetailBaseInfo";
 import ShopInfo from "views/detail/childComponents/ShopInfo";
 import DetailGoodsInfo from "views/detail/childComponents/DetailGoodsInfo";
+import DetailParamInfo from "views/detail/childComponents/DetailParamInfo";
 
 import {debounce} from "common/utils";
 
 
-import {getDetail, Goods,Shop} from "network/detail";
+import {getDetail, Goods,Shop,GoodsParam} from "network/detail";
 
 export default {
   name: "Detail",
@@ -45,7 +38,9 @@ export default {
       goods: {},
       shopInfo: {},
       detailInfo:{},
-      refresh:undefined
+      refresh:undefined,
+      paramInfo:{},
+      showBackTop:false
     }
   },
   components: {
@@ -54,16 +49,25 @@ export default {
     DetailBaseInfo,
     Scroll,
     ShopInfo,
-    DetailGoodsInfo
+    DetailGoodsInfo,
+    DetailParamInfo,
+    BackTop
   },
   methods:{
     imageLoaded() {
       this.refresh&&this.refresh.call(this.$refs.scroll);
+    },
+    scrollChange({y}) {
+      this.showBackTop=-y>1000
+    },
+    backToTop() {
+      this.$refs.scroll.scrollTo(0,0)
     }
+
   },
   created() {
 
-    console.log("created")
+
 
     this.iid = this.$route.params.id
     getDetail(this.iid).then(res => {
@@ -72,6 +76,7 @@ export default {
       this.goods = new Goods(result.itemInfo, result.columns, result.shopInfo.services)
       this.shopInfo = new Shop(result.shopInfo)
       this.detailInfo=result.detailInfo
+      this.paramInfo=new GoodsParam(result.itemParams.info,result.itemParams.rule)
       console.log(this.goods)
     })
   },
@@ -91,6 +96,7 @@ export default {
   background: #fff;
   height: 100vh;
 }
+
 
 .scroll {
   position: absolute;
