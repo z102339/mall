@@ -11,7 +11,6 @@ export function debounce(func,time){
 
 export function formatDate(date, fmt) {
   if (/(y+)/.test(fmt)) {
-    console.log("$1",RegExp.$1)
     fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
   }
   let o = {

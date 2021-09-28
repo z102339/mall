@@ -34,7 +34,6 @@ export default {
       this.bScroll && this.bScroll.finishPullUp()
     },
     refresh() {
-      console.log("刷新")
      this.bScroll && this.bScroll.refresh()
     }
   },

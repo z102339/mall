@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="info-user">
-      <img :src="commentInfo.user.avatar" alt="">
+      <img :src="commentInfo.user.avatar" @load="imageLoad" alt="">
       <span>{{ commentInfo.user.uname }}</span>
     </div>
     <div class="info-detail">
@@ -18,7 +18,7 @@
         <span>{{commentInfo.style}}</span>
       </div>
       <div class="info-imgs" v-if="commentInfo.images">
-        <img :src="item" v-for="item in commentInfo.images" alt="">
+        <img :src="item" v-for="item in commentInfo.images" @load="imageLoad" alt="">
       </div>
     </div>
   </div>
@@ -41,6 +41,11 @@ export default {
     showDate:function(value){
       const date=new Date(value*1000)
       return formatDate(date,'yyyy-MM-dd')
+    }
+  },
+  methods:{
+    imageLoad() {
+      this.$emit("imageLoad")
     }
   }
 }

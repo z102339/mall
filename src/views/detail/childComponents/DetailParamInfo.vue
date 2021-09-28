@@ -12,7 +12,7 @@
       </tr>
     </table>
     <div class="info-img" v-if="paramInfo.image.length!==0">
-      <img :src="paramInfo.image" alt="">
+      <img :src="paramInfo.image" @load="imageLoad" alt="">
     </div>
   </div>
 </template>
@@ -20,13 +20,15 @@
 <script>
 export default {
   name: "DetailParamInfo",
-  created() {
-    console.log("paramInfo",Object.keys(this.paramInfo))
-  },
 
   props: {
     paramInfo: {
       type: Object,
+    }
+  },
+  methods:{
+    imageLoad() {
+      this.$emit("imageLoad")
     }
   }
 }

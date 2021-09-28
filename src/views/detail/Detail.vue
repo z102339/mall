@@ -1,14 +1,14 @@
 <template>
   <div id="detail">
-    <detail-nav-bar></detail-nav-bar>
+    <detail-nav-bar ref="nav-bar" @tabIndex="tabIndex"></detail-nav-bar>
     <scroll class="scroll" ref="scroll" :probe-type="3" @scroll="scrollChange">
-      <detail-swiper :banners="banners"></detail-swiper>
+      <detail-swiper :banners="banners" @swiperFinish="swiperFinish"></detail-swiper>
       <detail-base-info :goods="goods"></detail-base-info>
       <shop-info :shop-info="shopInfo"></shop-info>
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoaded"></detail-goods-info>
-      <detail-param-info :param-info="paramInfo"></detail-param-info>
-      <comment-info :comment-info="commentInfo"></comment-info>
-      <goods-list :goods="recommends"></goods-list>
+      <detail-param-info :param-info="paramInfo" ref="detail-param-info" @imageLoad="imageLoaded"></detail-param-info>
+      <comment-info :comment-info="commentInfo" ref="comment-info" @imageLoad="imageLoaded"></comment-info>
+      <goods-list :goods="recommends" ref="recommend"></goods-list>
     </scroll>
     <back-top v-show="showBackTop" @click.native="backToTop"></back-top>
 
@@ -47,6 +47,8 @@ export default {
       paramInfo:{},
       commentInfo:{},
       recommends:[],
+      quickNav:[0,0,0,0],//商品，参数，评论，推荐快速导航
+      swiperHeightReady:false,
       showBackTop:false
     }
   },
@@ -64,14 +66,45 @@ export default {
   },
   methods:{
     imageLoaded() {
-      this.refresh&&this.refresh.call(this.$refs.scroll);
+      if (this.refresh) {
+        this.refresh.call(this.$refs.scroll);
+        this.fillQuickNav()
+      }
+
     },
     scrollChange({y}) {
       this.showBackTop=-y>1000
+      const navBarCom = this.$refs["nav-bar"]
+      navBarCom.tabIndex=0
+      if (y<=this.quickNav[1]) {
+        navBarCom.tabIndex=1
+      }
+      if (y<=this.quickNav[2]) {
+        navBarCom.tabIndex=2
+      }
+
+      if (y<=this.quickNav[3]) {
+        navBarCom.tabIndex=3
+      }
     },
     backToTop() {
       this.$refs.scroll.scrollTo(0,0)
+    },
+    swiperFinish() {
+      this.swiperHeightReady=true
+      this.fillQuickNav()
+
+    },
+    fillQuickNav() {
+      this.quickNav[1]=this.$refs["detail-param-info"]&&this.$refs["detail-param-info"].$el.offsetTop*-1
+      this.quickNav[2]=this.$refs["comment-info"]&&this.$refs["comment-info"].$el.offsetTop*-1
+      this.quickNav[3]=this.$refs.recommend&&this.$refs.recommend.$el.offsetTop*-1
+    },
+    tabIndex(index) {
+      this.$refs.scroll&&this.$refs.scroll.scrollTo(0,this.quickNav[index])
     }
+
+
 
   },
   created() {
@@ -86,12 +119,10 @@ export default {
       if (result.rate.cRate != 0) {
         this.commentInfo=result.rate.list[0]
       }
-      console.log(this.goods);
     })
 
     getRecommend().then(res=>{
       this.recommends=res.data.list
-      console.log(res)
     })
 
 
@@ -100,7 +131,6 @@ export default {
   mounted() {
     this.refresh=debounce(this.$refs.scroll.refresh,0)
     this.$bus.$on("detailItemImageLoad",()=>{
-      console.log("detail refresh");
       this.refresh.call(this.$refs.scroll)
     })
   }

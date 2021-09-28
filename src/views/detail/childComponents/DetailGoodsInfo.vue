@@ -22,6 +22,11 @@ export default {
       default: {}
     }
   },
+  data() {
+    return {
+      imageLoadedCount:0
+    }
+  },
   methods:{
     imageLoaded() {
       this.$emit("imageLoad")
