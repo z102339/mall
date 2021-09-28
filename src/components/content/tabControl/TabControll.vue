@@ -16,11 +16,12 @@ export default {
         return []
       }
     },
-    currentIndex:{
-      type:Number,
-      default:0
-    }
 
+  },
+  data() {
+    return {
+      currentIndex:0
+    }
   },
   methods:{
     onClick(index){

@@ -7,6 +7,8 @@
       <shop-info :shop-info="shopInfo"></shop-info>
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoaded"></detail-goods-info>
       <detail-param-info :param-info="paramInfo"></detail-param-info>
+      <comment-info :comment-info="commentInfo"></comment-info>
+      <goods-list :goods="recommends"></goods-list>
     </scroll>
     <back-top v-show="showBackTop" @click.native="backToTop"></back-top>
 
@@ -14,8 +16,10 @@
 </template>
 
 <script>
+import {debounce} from "common/utils";
 import Scroll from "components/common/scroll/Scroll";
 import BackTop from "components/content/backTop/BackTop";
+import GoodsList from "components/content/goods/GoodsList";
 
 import DetailNavBar from "views/detail/childComponents/DetailNavBar";
 import DetailSwiper from "views/detail/childComponents/DetailSwiper";
@@ -23,11 +27,12 @@ import DetailBaseInfo from "views/detail/childComponents/DetailBaseInfo";
 import ShopInfo from "views/detail/childComponents/ShopInfo";
 import DetailGoodsInfo from "views/detail/childComponents/DetailGoodsInfo";
 import DetailParamInfo from "views/detail/childComponents/DetailParamInfo";
+import CommentInfo from "views/detail/childComponents/CommentInfo";
 
-import {debounce} from "common/utils";
 
 
-import {getDetail, Goods,Shop,GoodsParam} from "network/detail";
+
+import {getDetail, Goods,Shop,GoodsParam,getRecommend} from "network/detail";
 
 export default {
   name: "Detail",
@@ -40,6 +45,8 @@ export default {
       detailInfo:{},
       refresh:undefined,
       paramInfo:{},
+      commentInfo:{},
+      recommends:[],
       showBackTop:false
     }
   },
@@ -51,7 +58,9 @@ export default {
     ShopInfo,
     DetailGoodsInfo,
     DetailParamInfo,
-    BackTop
+    BackTop,
+    CommentInfo,
+    GoodsList
   },
   methods:{
     imageLoaded() {
@@ -66,9 +75,6 @@ export default {
 
   },
   created() {
-
-
-
     this.iid = this.$route.params.id
     getDetail(this.iid).then(res => {
       const result = res.result
@@ -77,12 +83,26 @@ export default {
       this.shopInfo = new Shop(result.shopInfo)
       this.detailInfo=result.detailInfo
       this.paramInfo=new GoodsParam(result.itemParams.info,result.itemParams.rule)
-      console.log(this.goods)
+      if (result.rate.cRate != 0) {
+        this.commentInfo=result.rate.list[0]
+      }
+      console.log(this.goods);
     })
+
+    getRecommend().then(res=>{
+      this.recommends=res.data.list
+      console.log(res)
+    })
+
+
   },
 
   mounted() {
     this.refresh=debounce(this.$refs.scroll.refresh,0)
+    this.$bus.$on("detailItemImageLoad",()=>{
+      console.log("detail refresh");
+      this.refresh.call(this.$refs.scroll)
+    })
   }
 
 }

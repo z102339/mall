@@ -3,7 +3,7 @@
     <nav-bar class="home-nav">
       <div slot="center">首页</div>
     </nav-bar>
-    <tab-controll :titles="['流行','新款','精选']" :current-index="tabIndex" @tabClick="tabClick" ref="tabControl" class="tabControl" v-show="showTopTabControl"></tab-controll>
+    <tab-controll :titles="['流行','新款','精选']"  @tabClick="tabClick" ref="topTabControl" class="tabControl" v-show="showTopTabControl"></tab-controll>
     <scroll :pull-up-load="true"  :probe-type="3" ref="scroll" @loadMore="loadMore" @scroll="scrollChange" class="home-content" >
       <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
       <recommend-view :recommends="recommends"></recommend-view>
@@ -100,6 +100,8 @@ export default {
     },
     tabClick(index) {
       this.tabIndex = index
+      this.$refs.topTabControl.currentIndex=index
+      this.$refs.tabControl.currentIndex=index
     },
     backTopClick(){
       this.$refs.scroll.scrollTo(0,0)
