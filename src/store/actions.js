@@ -6,6 +6,7 @@ export default {
       commit(ADD_COUNTER,product)
     } else {
       payload.count=1
+      payload.checked=true
       commit(ADD_TO_CART,payload)
     }
   }

@@ -34,6 +34,7 @@ export default {
       this.bScroll && this.bScroll.finishPullUp()
     },
     refresh() {
+      console.log(this.bScroll,"refresh")
      this.bScroll && this.bScroll.refresh()
     }
   },
