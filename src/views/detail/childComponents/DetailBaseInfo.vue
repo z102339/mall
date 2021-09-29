@@ -3,9 +3,9 @@
   <div v-if="Object.keys(goods).length!==0" class="base-info">
     <div class="info-title">{{goods.title}}</div>
     <div>
-      <span class="real-price">{{'¥'+goods.realPrice}}</span>
-      <span class="old-price">{{goods.oldPrice}}</span>
-      <span class="discount-info">{{goods.discount}}</span>
+      <span class="real-price">{{goods.newPrice}}</span>
+      <span class="old-price" v-show="goods.oldPrice">{{goods.oldPrice}}</span>
+      <span class="discount-info" v-show="goods.discount">{{goods.discount}}</span>
     </div>
     <div class="column">
       <span v-for="column in goods.columns">{{column}}</span>

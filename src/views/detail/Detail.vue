@@ -11,7 +11,7 @@
       <goods-list :goods="recommends" ref="recommend"></goods-list>
     </scroll>
     <back-top v-show="showBackTop" @click.native="backToTop"></back-top>
-
+    <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
   </div>
 </template>
 
@@ -28,6 +28,7 @@ import ShopInfo from "views/detail/childComponents/ShopInfo";
 import DetailGoodsInfo from "views/detail/childComponents/DetailGoodsInfo";
 import DetailParamInfo from "views/detail/childComponents/DetailParamInfo";
 import CommentInfo from "views/detail/childComponents/CommentInfo";
+import DetailBottomBar from "views/detail/childComponents/DetailBottomBar";
 
 
 
@@ -49,7 +50,8 @@ export default {
       recommends:[],
       quickNav:[0,0,0,0],//商品，参数，评论，推荐快速导航
       swiperHeightReady:false,
-      showBackTop:false
+      showBackTop:false,
+      topImages:null
     }
   },
   components: {
@@ -62,7 +64,8 @@ export default {
     DetailParamInfo,
     BackTop,
     CommentInfo,
-    GoodsList
+    GoodsList,
+    DetailBottomBar
   },
   methods:{
     imageLoaded() {
@@ -102,8 +105,22 @@ export default {
     },
     tabIndex(index) {
       this.$refs.scroll&&this.$refs.scroll.scrollTo(0,this.quickNav[index])
-    }
+    },
+    addToCart() {
 
+
+      let product={}
+      product.imgUrl=this.banners[0]
+      product.title=this.goods.title
+      product.desc=this.goods.desc
+      product.newPrice=this.goods.nowPrice
+      product.count=1
+      product.iid=this.iid
+      this.$store.commit('addCart',product)
+
+      //添加到购物车
+
+    }
 
 
   },
@@ -154,7 +171,7 @@ export default {
   overflow: hidden;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 58px;
 }
 
 </style>
