@@ -114,9 +114,8 @@ export default {
       product.title=this.goods.title
       product.desc=this.goods.desc
       product.newPrice=this.goods.nowPrice
-      product.count=1
       product.iid=this.iid
-      this.$store.commit('addCart',product)
+      this.$store.dispatch('addCart',product)
 
       //添加到购物车
 
