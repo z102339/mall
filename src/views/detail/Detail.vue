@@ -12,6 +12,7 @@
     </scroll>
     <back-top v-show="showBackTop" @click.native="backToTop"></back-top>
     <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
+<!--    <toast :message="message" :show="show"></toast>-->
   </div>
 </template>
 
@@ -20,6 +21,7 @@ import {debounce} from "common/utils";
 import Scroll from "components/common/scroll/Scroll";
 import BackTop from "components/content/backTop/BackTop";
 import GoodsList from "components/content/goods/GoodsList";
+import Toast from "components/common/toast/Toast";
 
 import DetailNavBar from "views/detail/childComponents/DetailNavBar";
 import DetailSwiper from "views/detail/childComponents/DetailSwiper";
@@ -33,7 +35,10 @@ import DetailBottomBar from "views/detail/childComponents/DetailBottomBar";
 
 
 
+
 import {getDetail, Goods,Shop,GoodsParam,getRecommend} from "network/detail";
+
+import {mapActions} from 'vuex'
 
 export default {
   name: "Detail",
@@ -51,7 +56,10 @@ export default {
       quickNav:[0,0,0,0],//商品，参数，评论，推荐快速导航
       swiperHeightReady:false,
       showBackTop:false,
-      topImages:null
+      topImages:null,
+      message:undefined,
+      show:false
+
     }
   },
   components: {
@@ -65,7 +73,8 @@ export default {
     BackTop,
     CommentInfo,
     GoodsList,
-    DetailBottomBar
+    DetailBottomBar,
+    // Toast
   },
   methods:{
     imageLoaded() {
@@ -75,6 +84,7 @@ export default {
       }
 
     },
+    ...mapActions(['addCart']),
     scrollChange({y}) {
       this.showBackTop=-y>1000
       const navBarCom = this.$refs["nav-bar"]
@@ -115,7 +125,17 @@ export default {
       product.desc=this.goods.desc
       product.newPrice=this.goods.nowPrice
       product.iid=this.iid
-      this.$store.dispatch('addCart',product)
+      this.addCart(product).then(res=>{
+        console.log(this.$toast.$el);
+        this.$toast.show(res,2000)
+        console.log(this.$toast)
+        // this.message=res
+        // this.show=true
+        // setTimeout(()=>{
+        //   this.show=false
+        // },2000)
+      })
+    //  this.$store.dispatch('addCart',product)
 
       //添加到购物车
 

@@ -30,26 +30,11 @@
     },
     methods: {
       checkBtnClick: function () {
-
         if (this.isSelectAll) {
           this.$store.getters.cartList.forEach(item=>item.checked=false)
         }else{
           this.$store.getters.cartList.forEach(item=>item.checked=true)
         }
-
-        // // 1.判断是否有未选中的按钮
-        // let isSelectAll = this.$store.getters.cartList.find(item => !item.checked);
-        //
-        // // 2.有未选中的内容, 则全部选中
-        // if (isSelectAll) {
-        //   this.$store.getters.cartList.forEach(item => {
-        //     item.checked = true;
-        //   });
-        // } else {
-        //   this.$store.getters.cartList.forEach(item => {
-        //     item.checked = false;
-        //   });
-        // }
       }
     }
 	}
@@ -61,7 +46,7 @@
     height: 44px;
     background-color: #eee;
     position: fixed;
-    bottom: 50px;
+    bottom: 49px;
     left: 0;
     box-shadow: 0 -2px 3px rgba(0, 0, 0, .2);
     font-size: 14px;
